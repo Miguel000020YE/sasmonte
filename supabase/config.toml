@@ -1,0 +1,67 @@
+# Configuration Supabase CLI (développement local ET référence pour le projet hébergé).
+# Les réglages d'Auth du projet hébergé se font aussi dans le Dashboard : voir docs/DEPLOIEMENT.md.
+project_id = "sasmonte"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public"]
+max_rows = 1000
+
+[db]
+port = 54322
+major_version = 15
+
+[storage]
+enabled = true
+file_size_limit = "20MiB"
+
+[auth]
+enabled = true
+site_url = "http://localhost:5173"
+# Ajoute ici l'URL Netlify de production (ex. "https://ton-site.netlify.app/**")
+additional_redirect_urls = ["http://localhost:5173/**"]
+jwt_expiry = 3600
+enable_signup = true
+minimum_password_length = 8
+
+[auth.email]
+enable_signup = true
+double_confirm_changes = true
+enable_confirmations = true
+
+[auth.external.google]
+enabled = true
+client_id = "env(GOOGLE_CLIENT_ID)"
+secret = "env(GOOGLE_CLIENT_SECRET)"
+skip_nonce_check = false
+
+# Fonctions appelées par le front : JWT vérifié par la passerelle (en plus de requireUser / requireAdmin dans le code)
+[functions.generate-script]
+verify_jwt = true
+[functions.generate-voice]
+verify_jwt = true
+[functions.reverse-search]
+verify_jwt = true
+[functions.admin-stats]
+verify_jwt = true
+[functions.admin-quotas]
+verify_jwt = true
+[functions.admin-adjust-credits]
+verify_jwt = true
+[functions.admin-validate-payment]
+verify_jwt = true
+
+# Appelée par le cron avec un secret : pas de JWT utilisateur
+[functions.cron-cleanup]
+verify_jwt = false
+
+# Paiements : fonctions appelées par le front (JWT)
+[functions.saspay-create-payment]
+verify_jwt = true
+
+# Webhooks serveur-à-serveur : pas de JWT utilisateur (protégés par signature HMAC / secret)
+[functions.saspay-webhook]
+verify_jwt = false
+[functions.chariow-webhook]
+verify_jwt = false
